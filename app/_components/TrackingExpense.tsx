@@ -20,29 +20,30 @@ type Expense = {
   amount: number;
 };
 
-export const Hero = () => {
+export const TrackingExpense = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
-  const [error, setError] = useState<string | null>(null); 
+  const [submitted, setSubmitted] = useState(false); // État pour le suivi de la soumission
+  const [duplicateError, setDuplicateError] = useState(false); // État pour le suivi des doublons
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitted(true); // Définir comme soumis
+    setDuplicateError(false); // Réinitialiser l'erreur de doublon
+
     if (!name || !amount) return;
 
     const normalizedName = name.trim().toLowerCase();
     const exists = expenses.some(expense => expense.name.toLowerCase().trim() === normalizedName);
 
     if (exists) {
-      setError("Ce type de dépense existe déjà."); 
-      return;
-    } else {
-      setError(null); 
-    }
+      setDuplicateError(true); // Définir l'erreur de doublon
+      return; 
+    } 
 
     const parsedAmount = parseFloat(amount);
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      setError("Veuillez entrer un montant valide.");
       return;
     }
 
@@ -53,8 +54,8 @@ export const Hero = () => {
 
     setName("");
     setAmount("");
-};
-
+    setSubmitted(false); // Réinitialiser après une soumission réussie
+  };
 
   const handleDelete = (index: number) => {
     setExpenses((prevExpenses) => prevExpenses.filter((_, i) => i !== index));
@@ -68,10 +69,10 @@ export const Hero = () => {
       {
         data: expenses.map((expense) => ((expense.amount / totalAmount) * 100).toFixed(2)),
         backgroundColor: [
-            "#4c6ef5", "#ffa94d", "#fa5252", "#51cf66", "#1c7ed6",
-            "#7950f2", "#ff6b6b", "#20c997", "#fd7e14", "#f03e3e",
-            "#c91e4b", "#e64980", "#007bff", "#6610f2", "#d63384"
-        ],
+          "#4c6ef5", "#ffa94d", "#fa5252", "#51cf66", "#1c7ed6",
+          "#7950f2", "#ff6b6b", "#20c997", "#fd7e14", "#f03e3e",
+          "#c91e4b", "#e64980", "#007bff", "#6610f2", "#d63384"
+      ],
       },
     ],
   };
@@ -94,10 +95,10 @@ export const Hero = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center pt-8">
+    <div className="flex flex-col items-center justify-center pt-8 bg-background">
       <form onSubmit={handleSubmit} className="w-full max-w-md px-4 md:px-0 space-y-4 mb-8">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="name" className="block text-sm font-medium text-foreground">
             Nom
           </label>
           <input
@@ -106,13 +107,13 @@ export const Hero = () => {
             name="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            className="mt-1 block w-full px-4 py-2 border border-muted rounded-md focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
             placeholder="Type de dépense"
           />
         </div>
 
         <div>
-          <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="amount" className="block text-sm font-medium text-foreground">
             Montant (en €)
           </label>
           <input
@@ -122,23 +123,35 @@ export const Hero = () => {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             step="0.01"
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            className="mt-1 block w-full px-4 py-2 border border-muted rounded-md focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
             placeholder="Entrez le montant"
           />
         </div>
 
-        {error && (
-          <div className="text-red-500 text-sm">{error}</div>
+        {submitted && !name && (
+          <div className="text-red-500 text-sm mt-2">
+            Veuillez entrer un nom pour la dépense.
+          </div>
+        )}
+
+        {submitted && !amount && (
+          <div className="text-red-500 text-sm mt-2">
+            Veuillez entrer un montant valide.
+          </div>
+        )}
+
+        {submitted && duplicateError && (
+          <div className="text-red-500 text-sm mt-2">
+            Une dépense avec ce nom existe déjà. Veuillez choisir un autre nom.
+          </div>
         )}
 
         <Button
-            type="submit"
-            className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-            disabled={!name || !amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0}
-            >
-            Ajouter au budget
+          type="submit"
+          className="w-full text-white font-bold py-2 px-4 rounded-md bg-blue-600 focus:outline-none focus:ring focus:ring-primary focus:ring-opacity-50"
+        >
+          Ajouter au budget
         </Button>
-
       </form>
 
       {expenses.length > 0 && (
@@ -148,16 +161,16 @@ export const Hero = () => {
           </div>
 
           <div className="flex-1 overflow-x-auto mt-4 md:mt-0 md:ml-4">
-            <table className="min-w-full border ">
-            <thead>
-                <tr className="bg-gray-200">
-                    <th className="border px-4 py-2 text-left text-black">Dépense</th>
-                    <th className="border px-4 py-2 text-left text-black">Montant</th>
-                    <th className="border px-4 py-2 text-left text-black">Pourcentage</th>
+            <table className="min-w-full border bg-base">
+              <thead>
+                <tr className="bg-muted">
+                  <th className="border px-4 py-2 text-left text-foreground">Dépense</th>
+                  <th className="border px-4 py-2 text-left text-foreground">Montant</th>
+                  <th className="border px-4 py-2 text-left text-foreground">Pourcentage</th>
+                  <th className="border px-4 py-2 text-left text-foreground"></th>
                 </tr>
-            </thead>
+              </thead>
               <tbody>
-
                 {expenses.map((expense, index) => (
                   <tr key={index} className="border-b">
                     <td className="border px-4 py-2">{expense.name}</td>
@@ -170,20 +183,20 @@ export const Hero = () => {
                         onClick={() => handleDelete(index)}
                         className="bg-red-500 text-white hover:bg-red-600"
                       >
-                      <Trash />  
+                        <Trash />
                       </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
-                    <tr className=" font-bold">
-                        <td className="bg-gray-300 border px-4 py-2 text-left text-black">Total</td>
-                        <td className="bg-gray-300 border px-4 py-2 text-left text-black">{totalAmount} €</td>
-                        <td className="bg-gray-300 border px-4 py-2 text-left text-black"> 100% </td>
-                        <td className="border-transparent" />
-                    </tr>
-                </tfoot>
+                <tr className="font-bold">
+                  <td className="bg-muted border px-4 py-2 text-left text-foreground">Total</td>
+                  <td className="bg-muted border px-4 py-2 text-left text-foreground">{totalAmount} €</td>
+                  <td className="bg-muted border px-4 py-2 text-left text-foreground">100%</td>
+                  <td className="border-transparent" />
+                </tr>
+              </tfoot>
             </table>
           </div>
         </div>
