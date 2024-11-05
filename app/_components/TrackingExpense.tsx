@@ -12,6 +12,7 @@ import {
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Button } from "@/components/ui/button"; 
 import { Trash } from "lucide-react";
+import * as XLSX from "xlsx"; // Importer la bibliothèque xlsx
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -24,13 +25,13 @@ export const TrackingExpense = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
-  const [submitted, setSubmitted] = useState(false); // État pour le suivi de la soumission
-  const [duplicateError, setDuplicateError] = useState(false); // État pour le suivi des doublons
+  const [submitted, setSubmitted] = useState(false);
+  const [duplicateError, setDuplicateError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true); // Définir comme soumis
-    setDuplicateError(false); // Réinitialiser l'erreur de doublon
+    setSubmitted(true);
+    setDuplicateError(false);
 
     if (!name || !amount) return;
 
@@ -38,7 +39,7 @@ export const TrackingExpense = () => {
     const exists = expenses.some(expense => expense.name.toLowerCase().trim() === normalizedName);
 
     if (exists) {
-      setDuplicateError(true); // Définir l'erreur de doublon
+      setDuplicateError(true);
       return; 
     } 
 
@@ -54,7 +55,7 @@ export const TrackingExpense = () => {
 
     setName("");
     setAmount("");
-    setSubmitted(false); // Réinitialiser après une soumission réussie
+    setSubmitted(false); 
   };
 
   const handleDelete = (index: number) => {
@@ -72,7 +73,7 @@ export const TrackingExpense = () => {
           "#4c6ef5", "#ffa94d", "#fa5252", "#51cf66", "#1c7ed6",
           "#7950f2", "#ff6b6b", "#20c997", "#fd7e14", "#f03e3e",
           "#c91e4b", "#e64980", "#007bff", "#6610f2", "#d63384"
-      ],
+        ],
       },
     ],
   };
@@ -92,6 +93,17 @@ export const TrackingExpense = () => {
         formatter: (value) => `${value}%`,
       },
     },
+  };
+
+  // Fonction pour télécharger les dépenses en XLSX
+  const downloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(expenses.map(expense => ({
+      Dépense: expense.name,
+      Montant: expense.amount,
+    })));
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Dépenses");
+    XLSX.writeFile(workbook, "depenses.xlsx");
   };
 
   return (
@@ -200,6 +212,15 @@ export const TrackingExpense = () => {
             </table>
           </div>
         </div>
+      )}
+
+      {expenses.length > 0 && (
+        <Button
+          onClick={downloadExcel}
+          className="mt-4 text-white font-bold py-2 px-4 rounded-md bg-green-600 focus:outline-none focus:ring focus:ring-primary focus:ring-opacity-50"
+        >
+          Télécharger en XLSX
+        </Button>
       )}
     </div>
   );
