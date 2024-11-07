@@ -12,8 +12,7 @@ import {
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Button } from "@/components/ui/button"; 
 import { Trash } from "lucide-react";
-import * as XLSX from "xlsx"; // Importer la bibliothèque xlsx
-
+import * as XLSX from "xlsx";
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 type Expense = {
@@ -95,7 +94,6 @@ export const TrackingExpense = () => {
     },
   };
 
-  // Fonction pour télécharger les dépenses en XLSX
   const downloadExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(expenses.map(expense => ({
       Dépense: expense.name,
@@ -107,7 +105,7 @@ export const TrackingExpense = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center pt-8 bg-background">
+    <section className="flex flex-col items-center justify-center pt-8 bg-background">
       <form onSubmit={handleSubmit} className="w-full max-w-md px-4 md:px-0 space-y-4 mb-8">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-foreground">
@@ -222,6 +220,6 @@ export const TrackingExpense = () => {
           Télécharger en XLSX
         </Button>
       )}
-    </div>
+    </section>
   );
 };

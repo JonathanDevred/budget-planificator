@@ -40,7 +40,6 @@ const PlanningPage = () => {
   const totalExpenses = categories.reduce((total, category) => total + category.amount, 0);
   const remainingBalance = parseFloat(income) - totalExpenses || 0;
 
-  // Fonction pour exporter en fichier Excel
   const handleExportExcel = () => {
     const worksheetData = [
       ["Catégorie", "Montant (€)"], 

@@ -14,7 +14,7 @@ export const Header = () => {
     };
 
     return (
-        <div className="pt-8 space-y-4">
+        <section className="pt-8 space-y-4">
             <h1 className="text-3xl sm:text-4xl font-bold text-center">Planificateur de budget</h1>
             <div className="flex ml-12 md:justify-center sm:ml-24 items-center">
                 <div className="sm:hidden">
@@ -39,6 +39,6 @@ export const Header = () => {
                     <ThemeToggleButton />
                 </div>
             )}
-        </div>
+        </section>
     );
 };
