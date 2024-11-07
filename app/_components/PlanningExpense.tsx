@@ -105,7 +105,7 @@ const PlanningPage = () => {
             <tr>
               <th className="border p-2">Catégorie</th>
               <th className="border p-2">Montant (€)</th>
-              <th className="border p-2">Action</th>
+              <th className="border p-2"></th>
             </tr>
           </thead>
           <tbody>

@@ -204,7 +204,7 @@ export const TrackingExpense = () => {
                   <td className="bg-muted border px-4 py-2 text-left text-foreground">Total</td>
                   <td className="bg-muted border px-4 py-2 text-left text-foreground">{totalAmount} €</td>
                   <td className="bg-muted border px-4 py-2 text-left text-foreground">100%</td>
-                  <td className="border-transparent" />
+                  <td className="bg-muted border px-4 py-2 text-left text-foreground" />
                 </tr>
               </tfoot>
             </table>
